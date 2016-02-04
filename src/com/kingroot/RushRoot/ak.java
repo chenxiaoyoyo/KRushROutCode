@@ -7,22 +7,25 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 
 public class ak {
 	public static boolean a;
 	public static final String b = a ? "http://wuptest.cs0309.3g.qq.com"
 			: "http://www.kingroot.net/proxy.php";
-	private static String c;
-	private static int d;
-	private static String e;
+	private static String cpkgChannel;
+	private static int dVersionCode;
+	private static String eVersionName;
 
-	public static String a() {
-		return c;
+	public static String agetChannel() {
+		return cpkgChannel;
 	}
 
-	public static String b() {
-		return e;
+	public static String bgetVersionName() {
+		return eVersionName;
 	}
 
 	static void a(Context context, String strParam1, String strParam2) {
@@ -45,20 +48,38 @@ public class ak {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(
 					outCyrbyte);
 			prop.load(inputStream);
-			c = prop.getProperty("channel");
+			cpkgChannel = prop.getProperty("channel");
 			
 			if (strParam1 != null) {				
-				c = strParam1;
+				cpkgChannel = strParam1;
 			}
-			
-			
+			if (input != null) {
+				input.close();
+			}
+			//goto_1		
 		} catch (IOException e) {
 			// catch_0
-			c = "0";
+			c = "0";			
+			//goto_1
+		} finally {
 			if (input != null) {
 				input.close();
 			}
 		}
-
+		//goto_1
+		try {
+			PackageManager pkgmng = context.getPackageManager();
+			String pkgName = context.getPackageName();
+			PackageInfo pkginfo = pkgmng.getPackageInfo(pkgName, 0);
+			eVersionName = pkginfo.versionName;
+			dVersionCode = pkginfo.versionCode;
+			if (strParam2 != null) {
+				eVersionName = strParam2;
+			}
+		} catch (NameNotFoundException ex) {
+			//catch_2
+			eVersionName = "1.0.0";
+			dVersionCode = 0xb;
+		}
 	}
 }
